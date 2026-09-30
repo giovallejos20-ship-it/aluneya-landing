@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <style>
   :root{
     --noche:#14122B;
@@ -64,7 +66,7 @@
   .btn.sec:hover{box-shadow:none;border-color:var(--alba)}
 
   /* 1. Above the fold */
-  .hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:3rem;padding:3.5rem 0 4.5rem;min-height:calc(100svh - 64px)}
+  .hero{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:3rem;padding:3.5rem 0 4.5rem;min-height:calc(100svh - 64px)}
   .hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.6rem,6vw,4.6rem);line-height:1.02;letter-spacing:-.01em;max-width:12ch}
   .hero .sub{margin-top:1.3rem;max-width:46ch;color:var(--texto-suave);font-size:1.15rem}
   .hero .acciones{margin-top:2rem;display:flex;flex-wrap:wrap;gap:.8rem}
@@ -74,6 +76,13 @@
   .sellos strong{color:var(--alba);font-weight:600}
 
   .visual{position:relative;display:grid;place-items:center;aspect-ratio:1}
+  .visual canvas{position:absolute;inset:-8%;width:116%;height:116%;display:block;visibility:hidden;cursor:grab}
+  .visual canvas:active{cursor:grabbing}
+  .visual.webgl canvas{visibility:visible}
+  .visual.webgl .orbe-halo,.visual.webgl .orbe,.visual.webgl .base{display:none}
+  .pista{position:absolute;bottom:-2%;left:0;right:0;text-align:center;font-size:.85rem;color:var(--texto-suave);opacity:0;transition:opacity .8s;pointer-events:none}
+  .visual.webgl .pista{opacity:1}
+  @media (hover:none){.pista{display:none}.visual canvas{cursor:default}}
   .visual img{width:100%;height:100%;object-fit:cover;border-radius:24px}
   .orbe-halo{position:absolute;width:95%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle, rgba(242,166,90,.55) 0%, rgba(242,166,90,.12) 40%, transparent 68%);filter:blur(10px);animation:respira 9s ease-in-out infinite}
   .orbe{position:relative;width:62%;aspect-ratio:1/.92;border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;background:radial-gradient(circle at 50% 40%, #FFF6E6 0%, var(--alba) 30%, var(--ambar) 72%, #C9713A 100%);box-shadow:0 0 80px rgba(242,166,90,.6), inset 0 -18px 40px rgba(160,80,30,.35);animation:amanece 6s ease-out both}
@@ -145,7 +154,8 @@
   input{font:inherit;font-size:1rem;padding:.9rem 1rem;border-radius:12px;border:1px solid rgba(247,239,228,.25);background:rgba(247,239,228,.06);color:var(--marfil)}
   input::placeholder{color:rgba(247,239,228,.45)}
   input:focus{outline:2px solid var(--ambar);outline-offset:1px;border-color:transparent}
-  .error{color:#FFB4A2;font-size:.9rem;min-height:1.2em}
+  .error{color:#FFB4A2;font-size:.9rem}
+  .error:empty{display:none}
   form .btn{width:100%}
   .nota{font-size:.85rem;color:var(--texto-suave);text-align:center}
 
@@ -182,7 +192,7 @@
   }
   @media (max-width:860px){
     .hero{grid-template-columns:1fr;padding-top:2rem;gap:1rem;min-height:auto}
-    .visual{order:-1;width:min(320px,80%);margin-inline:auto}
+    .visual{order:-1;width:min(380px,92%);margin-inline:auto}
     .beneficios,.quien,.pedido{grid-template-columns:1fr}
     .beneficio,.beneficio:nth-child(even){padding:1.5rem 0;border-right:none}
     .secuencia{grid-template-columns:1fr;gap:2.2rem}
@@ -234,7 +244,7 @@
       </div>
     </div>
 
-    <div class="visual">
+    <div class="visual" id="visual">
       <!-- FOTO DEL PRODUCTO: cuando tengas una buena foto, súbela al repo como "producto.jpg",
            borra las 3 líneas del orbe de abajo y descomenta esta:
       <img src="producto.jpg" alt="Despertador de luz Aluneya encendido sobre un velador" width="600" height="600">
@@ -242,6 +252,8 @@
       <div class="orbe-halo" aria-hidden="true"></div>
       <div class="orbe" aria-hidden="true"></div>
       <div class="base" aria-hidden="true"><i></i><span>06:30</span><i></i></div>
+      <canvas id="lampara" aria-label="Despertador Aluneya en 3D simulando un amanecer" role="img"></canvas>
+      <p class="pista">Arrastra para girar la lámpara</p>
     </div>
   </div>
 
@@ -465,6 +477,172 @@
     addEventListener('scroll', update, {passive:true});
     addEventListener('resize', update);
     update();
+  })();
+
+
+  // ---------- LÁMPARA 3D ----------
+  (function(){
+    const host = document.getElementById('visual');
+    const canvas = document.getElementById('lampara');
+    if(!window.THREE) return;
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true}); } catch(e){ return; }
+    host.classList.add('webgl');
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, 1, .1, 100);
+    camera.position.set(0, 1.5, 7.4);
+
+    // Controles como el planeta: arrastrar para girar, auto-rotación, sin zoom (no roba el scroll)
+    let controls = null;
+    if(THREE.OrbitControls){
+      controls = new THREE.OrbitControls(camera, canvas);
+      controls.target.set(0, .85, 0);
+      controls.enableDamping = true; controls.dampingFactor = .07;
+      controls.enablePan = false; controls.enableZoom = false;
+      controls.autoRotate = !reduce; controls.autoRotateSpeed = .9;
+      controls.rotateSpeed = .6;
+      controls.minPolarAngle = .95; controls.maxPolarAngle = 1.62;
+      // En celulares solo auto-rotación, para que el dedo pueda hacer scroll
+      if(matchMedia('(hover: none)').matches){ controls.enableRotate = false; canvas.style.touchAction = 'pan-y'; }
+    } else {
+      camera.lookAt(0, .85, 0);
+    }
+
+    // Luces
+    scene.add(new THREE.AmbientLight(0x8a7ab8, .5));
+    const rim = new THREE.DirectionalLight(0xb9c2ff, .7); rim.position.set(-4, 5, -4); scene.add(rim);
+    const fill = new THREE.DirectionalLight(0xffffff, .25); fill.position.set(3, 2, 5); scene.add(fill);
+    const glowLight = new THREE.PointLight(0xff8a4a, 1, 10, 2); glowLight.position.set(0, 1.1, 0); scene.add(glowLight);
+
+    const lamp = new THREE.Group(); scene.add(lamp);
+
+    // Base
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(1.55, 1.38, .55, 96),
+      new THREE.MeshStandardMaterial({color:0x1c1a22, roughness:.45, metalness:.35}));
+    base.position.y = .275; lamp.add(base);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.55, .03, 12, 120),
+      new THREE.MeshStandardMaterial({color:0x4a4454, roughness:.35, metalness:.6}));
+    ring.rotation.x = Math.PI/2; ring.position.y = .55; lamp.add(ring);
+
+    // Domo de luz
+    const domeMat = new THREE.MeshStandardMaterial({color:0xd8d2dc, emissive:0xff6a3a, emissiveIntensity:.2, roughness:.3});
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(1.5, 96, 64, 0, Math.PI*2, 0, Math.PI/2), domeMat);
+    dome.position.y = .55; lamp.add(dome);
+
+    // Halo (misma técnica de la atmósfera del planeta)
+    const haloMat = new THREE.ShaderMaterial({
+      transparent:true, side:THREE.BackSide, blending:THREE.AdditiveBlending, depthWrite:false,
+      uniforms:{ glowColor:{value:new THREE.Color(0xff8a4a)}, strength:{value:.3} },
+      vertexShader:'varying vec3 vN; varying vec3 vP; void main(){ vN=normalize(normalMatrix*normal); vP=(modelViewMatrix*vec4(position,1.0)).xyz; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+      fragmentShader:'varying vec3 vN; varying vec3 vP; uniform vec3 glowColor; uniform float strength; void main(){ float a=pow(0.72-dot(vN,normalize(-vP)),2.2); gl_FragColor=vec4(glowColor, a*strength); }'
+    });
+    const halo = new THREE.Mesh(new THREE.SphereGeometry(1.95, 64, 48), haloMat);
+    halo.scale.set(1, .78, 1); halo.position.y = .95; lamp.add(halo);
+
+    // Pantalla del reloj (canvas curvado sobre la base)
+    const clockCanvas = document.createElement('canvas'); clockCanvas.width = 512; clockCanvas.height = 160;
+    const cx = clockCanvas.getContext('2d');
+    const clockTex = new THREE.CanvasTexture(clockCanvas);
+    const screen = new THREE.Mesh(new THREE.CylinderGeometry(1.523, 1.414, .3, 48, 1, true, -.42, .84),
+      new THREE.MeshBasicMaterial({map:clockTex, transparent:true}));
+    screen.position.y = .3; lamp.add(screen);
+    let lastMin = -1;
+    function drawClock(min){
+      if(min === lastMin) return; lastMin = min;
+      cx.clearRect(0,0,512,160);
+      cx.fillStyle = '#131118'; cx.fillRect(0,0,512,160);
+      cx.font = '600 22px Figtree, sans-serif'; cx.textAlign = 'center';
+      'SMTWTFS'.split('').forEach((d,i)=>{ cx.fillStyle = i===3 ? '#7FE3C4' : 'rgba(127,227,196,.35)'; cx.fillText(d, 176 + i*27, 34); });
+      const t = '06:' + String(min).padStart(2,'0');
+      cx.shadowColor = '#7FE3C4'; cx.shadowBlur = 18; cx.fillStyle = '#7FE3C4';
+      cx.font = '500 84px Figtree, sans-serif'; cx.fillText(t, 256, 122);
+      cx.shadowBlur = 0;
+      cx.beginPath(); cx.arc(118, 96, 7, 0, Math.PI*2); cx.fillStyle = 'rgba(127,227,196,.8)'; cx.fill();
+      clockTex.needsUpdate = true;
+    }
+    drawClock(0);
+
+    // Perillas
+    const knobGeo = new THREE.CylinderGeometry(.11, .11, .07, 32); knobGeo.rotateX(Math.PI/2);
+    const knobMat = new THREE.MeshStandardMaterial({color:0x8a7a52, roughness:.35, metalness:.8});
+    [-.62, .62].forEach(a=>{
+      const k = new THREE.Mesh(knobGeo, knobMat);
+      k.position.set(Math.sin(a)*1.49, .3, Math.cos(a)*1.49);
+      k.lookAt(Math.sin(a)*3, .3, Math.cos(a)*3); lamp.add(k);
+    });
+
+    // Velador con luz que se difumina
+    const fadeCanvas = document.createElement('canvas'); fadeCanvas.width = fadeCanvas.height = 256;
+    const fc = fadeCanvas.getContext('2d'); const g = fc.createRadialGradient(128,128,10,128,128,128);
+    g.addColorStop(0,'#fff'); g.addColorStop(.55,'#888'); g.addColorStop(1,'#000');
+    fc.fillStyle = g; fc.fillRect(0,0,256,256);
+    const table = new THREE.Mesh(new THREE.CircleGeometry(3.6, 96),
+      new THREE.MeshStandardMaterial({color:0x3a2e4a, roughness:.85, transparent:true, alphaMap:new THREE.CanvasTexture(fadeCanvas), depthWrite:false}));
+    table.rotation.x = -Math.PI/2; scene.add(table);
+
+    // Anillo que gira alrededor (como el del planeta)
+    const scanMat = new THREE.MeshBasicMaterial({color:0xf2a65a, transparent:true, opacity:.25});
+    const scan = new THREE.Mesh(new THREE.TorusGeometry(2.1, .008, 8, 160), scanMat);
+    scan.rotation.x = Math.PI/2; scan.position.y = .02; scene.add(scan);
+
+    // Partículas en órbita
+    const N = 340, op = new Float32Array(N*3);
+    for(let i=0;i<N;i++){ const a=Math.random()*Math.PI*2, r=2.25+Math.random()*.7; op[i*3]=Math.cos(a)*r; op[i*3+1]=.15+Math.random()*1.9; op[i*3+2]=Math.sin(a)*r; }
+    const orbitGeo = new THREE.BufferGeometry(); orbitGeo.setAttribute('position', new THREE.BufferAttribute(op,3));
+    const orbitMat = new THREE.PointsMaterial({color:0xffc98a, size:.035, transparent:true, opacity:.7, blending:THREE.AdditiveBlending, depthWrite:false});
+    const orbit = new THREE.Points(orbitGeo, orbitMat); scene.add(orbit);
+
+    // Estrellas de fondo
+    const S = 700, sp = new Float32Array(S*3);
+    for(let i=0;i<S;i++){ const r=10+Math.random()*8, t=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1); sp[i*3]=r*Math.sin(ph)*Math.cos(t); sp[i*3+1]=r*Math.cos(ph); sp[i*3+2]=r*Math.sin(ph)*Math.sin(t); }
+    const starGeo = new THREE.BufferGeometry(); starGeo.setAttribute('position', new THREE.BufferAttribute(sp,3));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({color:0xd8ceff, size:.05, transparent:true, opacity:.7}));
+    scene.add(stars);
+
+    // Ciclo de amanecer: 06:00 -> 06:30
+    const stops = [[0,new THREE.Color(0x2a1838)],[.35,new THREE.Color(0xa8341f)],[.7,new THREE.Color(0xf2a65a)],[1,new THREE.Color(0xfff0d4)]];
+    const tmp = new THREE.Color();
+    function colorAt(p){
+      for(let i=1;i<stops.length;i++){ if(p<=stops[i][0]){ const a=stops[i-1], b=stops[i]; return tmp.copy(a[1]).lerp(b[1], (p-a[0])/(b[0]-a[0])); } }
+      return tmp.copy(stops[stops.length-1][1]);
+    }
+    const ease = x => x<.5 ? 2*x*x : 1-Math.pow(-2*x+2,2)/2;
+    const CICLO = 18;
+    function sunrise(t){
+      if(reduce) return {p:1, min:30};
+      const u = (t % CICLO) / CICLO;
+      if(u < .72) { const r = u/.72; return {p:ease(r), min:Math.floor(r*30)}; }
+      if(u < .92) return {p:1, min:30};
+      return {p:1-(u-.92)/.08, min:30};
+    }
+
+    function resize(){
+      const w = canvas.clientWidth, h = canvas.clientHeight; if(!w || !h) return;
+      renderer.setSize(w, h, false); camera.aspect = w/h; camera.updateProjectionMatrix();
+    }
+    new ResizeObserver(resize).observe(host); resize();
+
+    let visible = true;
+    new IntersectionObserver(e => { visible = e[0].isIntersecting; }).observe(host);
+
+    const clock = new THREE.Clock();
+    (function frame(){
+      requestAnimationFrame(frame);
+      if(!visible) return;
+      const t = clock.getElapsedTime();
+      const s = sunrise(t), c = colorAt(s.p);
+      domeMat.emissive.copy(c); domeMat.emissiveIntensity = .08 + s.p*1.25;
+      glowLight.color.copy(c); glowLight.intensity = .2 + s.p*2.4;
+      haloMat.uniforms.glowColor.value.copy(c); haloMat.uniforms.strength.value = .12 + s.p*.95;
+      orbitMat.color.copy(c).lerp(new THREE.Color(0xffffff), .25);
+      drawClock(s.min);
+      if(!reduce){ orbit.rotation.y += .0022; stars.rotation.y += .0003; scan.rotation.z = t*.5; scanMat.opacity = .15 + .12*Math.sin(t*1.5); }
+      if(controls) controls.update();
+      renderer.render(scene, camera);
+    })();
   })();
 
   // Formulario -> WhatsApp -> agradecimiento

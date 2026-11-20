@@ -10,9 +10,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Figtree:wght@300;400&display=swap" rel="stylesheet">
 <style>
-  /* ALUNEYA — galería editorial que amanece.
-     Estructura: líneas de 1px, cero radios, cero sombras, mucho aire.
-     Color: cada sección es una hora del amanecer, con la paleta oficial del packaging. */
   :root{
     --navy:#141726; --morado:#31307E; --violeta:#44438F; --rosado:#D397B3;
     --crema:#EAD8B1; --sol:#FBB462; --calido:#FC995E; --ambar:#FCC266;
@@ -31,8 +28,6 @@
   a{color:inherit}
   img{display:block;max-width:100%}
   :focus-visible{outline:1px solid currentColor;outline-offset:3px}
-
-  /* Horas del amanecer: cada bloque define fondo, tinta, tinta suave y línea */
   .h-noche   {--bg:var(--navy);   --fg:var(--crema); --muted:rgba(234,216,177,.72); --line:rgba(234,216,177,.22); --cta:var(--sol);  --cta-fg:var(--navy)}
   .h-madrugada{--bg:var(--morado); --fg:var(--crema); --muted:rgba(234,216,177,.78); --line:rgba(234,216,177,.26); --cta:var(--sol);  --cta-fg:var(--navy)}
   .h-alba    {--bg:var(--violeta);--fg:var(--crema); --muted:rgba(234,216,177,.84); --line:rgba(234,216,177,.3);  --cta:var(--sol);  --cta-fg:var(--navy)}
@@ -41,12 +36,9 @@
   .h-sol     {--bg:var(--ambar);  --fg:var(--navy);  --muted:rgba(20,23,38,.74);   --line:rgba(20,23,38,.28);   --cta:var(--navy); --cta-fg:var(--crema)}
   .h-dia     {--bg:var(--blanco); --fg:var(--navy);  --muted:var(--gris);           --line:rgba(20,23,38,.16);   --cta:var(--sol);  --cta-fg:var(--navy)}
   [class*="h-"]{background:var(--bg);color:var(--fg)}
-
   .wrap{max-width:1440px;margin-inline:auto;padding-inline:var(--pad)}
   .label{font:400 var(--t-sm)/1.5 var(--sans);text-transform:uppercase;letter-spacing:.1em}
   .stone{color:var(--muted)}
-
-  /* Barra */
   header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line)}
   .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
   .wordmark{display:flex;align-items:center;gap:12px;font:500 24px/1 var(--serif);letter-spacing:.3em;text-decoration:none}
@@ -55,16 +47,12 @@
   .nav nav a{font:400 var(--t-sm)/1 var(--sans);text-transform:uppercase;letter-spacing:.1em;text-decoration:none}
   .nav nav a:not(.btn):hover{text-decoration:underline;text-underline-offset:4px}
   .nav .btn{min-height:36px;padding:10px 18px}
-
-  /* Botones: rectángulo lleno (el sol) + enlace subrayado */
   .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:14px 30px;
     font:400 var(--t-sm)/1 var(--sans);text-transform:uppercase;letter-spacing:.1em;text-decoration:none;
     color:var(--cta-fg);background:var(--cta);border:1px solid var(--cta);cursor:pointer;transition:background .2s,color .2s}
   .btn:hover{background:transparent;color:var(--fg);border-color:var(--fg)}
   .btn.solo{background:none;border-color:transparent;color:var(--fg);padding-inline:0;text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
   .btn.solo:hover{text-decoration-thickness:2px}
-
-  /* Hero */
   .hero{display:grid;grid-template-columns:var(--col) 1fr;gap:var(--hueco);align-items:center;padding-block:56px;min-height:calc(100svh - 65px)}
   .hero h1{margin-top:20px;font:500 clamp(46px,5vw,76px)/.98 var(--serif);letter-spacing:-.01em}
   .hero .sub{margin-top:24px;font-size:var(--t-lg);color:var(--muted);max-width:40ch}
@@ -73,7 +61,6 @@
   .sellos li{padding:12px 0;border-bottom:1px solid var(--line);font-size:var(--t-sm);display:flex;justify-content:space-between;gap:16px}
   .sellos li span:first-child{text-transform:uppercase;letter-spacing:.1em;font-size:var(--t-caption)}
   .sellos li span:last-child{color:var(--muted)}
-
   .imagen{margin:0}
   .marco{--p:0;position:relative;aspect-ratio:4/3.4;background:radial-gradient(90% 70% at 50% 100%, #31307E 0%, #1b1d36 70%);overflow:hidden;display:grid;place-items:center;border:1px solid var(--line)}
   .cielo{position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 62%,rgba(252,153,94,calc(var(--p)*.75)) 0%,rgba(211,151,179,calc(var(--p)*.35)) 38%,transparent 72%),radial-gradient(120% 90% at 50% 100%,rgba(251,180,98,calc(var(--p)*.55)),transparent 70%)}
@@ -90,37 +77,32 @@
   .control input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-10px;border-radius:50%;background:var(--sol);border:3px solid var(--navy);box-shadow:0 0 0 1px var(--sol)}
   .control input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--sol);border:3px solid var(--navy)}
   .control input[type=range]:focus-visible{outline:1px solid var(--crema);outline-offset:4px}
-  /* En tus manos */
   .mano{margin-top:56px;display:grid;grid-template-columns:minmax(260px,380px) 1fr;gap:var(--hueco);align-items:start}
   .mano video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#000;border:1px solid var(--line);display:block}
+  @media (min-width:821px){.mano video{position:sticky;top:88px}}
   .ficha{list-style:none;border-top:1px solid var(--fg)}
   .ficha li{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
   .ficha li span:first-child{font-size:var(--t-caption);text-transform:uppercase;letter-spacing:.1em;padding-top:3px}
   .ficha li span:last-child{color:var(--muted)}
   .ficha small{display:block;margin-top:4px;font-size:var(--t-sm)}
   figcaption{margin-top:12px;display:flex;justify-content:space-between;gap:16px;font-size:var(--t-caption);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
-
-  /* Secciones */
   section{padding-block:var(--section)}
   .hora{display:flex;justify-content:space-between;gap:16px;padding-bottom:16px;margin-bottom:40px;border-bottom:1px solid var(--line);font-size:var(--t-caption);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
   .cabeza{display:grid;grid-template-columns:var(--col) 1fr;gap:var(--hueco);align-items:start}
   .cabeza h2,.pedido h2{font:500 clamp(34px,3.6vw,54px)/1.02 var(--serif);letter-spacing:-.005em;margin-top:12px}
   .cabeza .intro{font-size:var(--t-lg);color:var(--muted);max-width:52ch;padding-top:34px}
-
   .grilla{margin-top:56px;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--fg)}
   .grilla > div{padding:20px 24px 28px 0}
   .grilla > div + div{padding-left:24px;border-left:1px solid var(--line)}
   .num{font:500 var(--t-caption)/1 var(--sans);letter-spacing:.1em;color:var(--muted)}
   .grilla h3{margin-top:32px;font:500 clamp(22px,1.9vw,26px)/1.15 var(--serif)}
   .grilla p{margin-top:10px;color:var(--muted)}
-
   .quien{margin-top:56px;display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,80px)}
   .quien h3{padding-bottom:12px;border-bottom:1px solid var(--fg)}
   .quien ul{list-style:none}
   .quien li{padding:16px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:28px 1fr}
   .quien li::before{content:"—";color:var(--muted)}
   .quien .no li{color:var(--muted)}
-
   .pasos{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--fg)}
   .pasos > div{padding:20px 24px 0 0}
   .pasos > div + div{padding-left:24px;border-left:1px solid var(--line)}
@@ -128,12 +110,11 @@
   .tono i{width:14px;height:14px;display:block;border:1px solid var(--fg)}
   .pasos h3{margin-top:32px;font:500 clamp(26px,2.4vw,34px)/1.08 var(--serif)}
   .pasos p{margin-top:10px;color:var(--muted);max-width:34ch}
-  .incluye{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:var(--t-sm);display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline}
-  .incluye span:last-child{color:var(--muted)}
-
-  /* Reserva */
   .pedido{display:grid;grid-template-columns:1fr var(--col);gap:var(--hueco);align-items:start}
   .pedido .bajada{margin-top:20px;font-size:var(--t-lg);color:var(--muted);max-width:46ch}
+  .antes{margin-top:40px;font-size:var(--t-lg);color:var(--muted)}
+  .antes s{text-decoration-thickness:1px}
+  .antes + .precio{margin-top:8px}
   .precio{margin-top:44px;font:500 clamp(64px,7vw,104px)/.9 var(--serif);letter-spacing:-.01em}
   .precio + p{margin-top:14px;font-size:var(--t-sm);color:var(--muted);max-width:44ch}
   form{display:grid;gap:28px;padding-top:8px}
@@ -154,8 +135,6 @@
   .gracias li{counter-increment:p;padding:12px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:28px 1fr}
   .gracias li::before{content:"0" counter(p);font-size:var(--t-caption);color:var(--muted);padding-top:3px}
   .gracias .btn{margin-top:28px;width:100%}
-
-  /* FAQ */
   .faq{border-top:1px solid var(--fg)}
   details{border-bottom:1px solid var(--line)}
   summary{cursor:pointer;list-style:none;padding:20px 40px 20px 0;position:relative;font:500 clamp(20px,1.7vw,23px)/1.25 var(--serif)}
@@ -163,12 +142,10 @@
   summary::after{content:"+";position:absolute;right:0;top:18px;font:300 22px/1 var(--sans)}
   details[open] summary::after{content:"–"}
   details p{padding:0 0 22px;color:var(--muted);max-width:62ch}
-
   .cierre h2{font:500 clamp(40px,5vw,78px)/.98 var(--serif);letter-spacing:-.01em;max-width:18ch}
   .cierre p{margin-top:24px;color:var(--muted);font-size:var(--t-lg);max-width:46ch}
   .cierre .btn{margin-top:36px}
   .cierre p.hora{max-width:none;margin-top:0;font-size:var(--t-caption)}
-
   footer{border-top:1px solid var(--line);padding-block:32px 44px}
   .pie{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;font-size:var(--t-caption);text-transform:uppercase;letter-spacing:.1em}
   .pie .wordmark{font-size:18px}
@@ -176,13 +153,11 @@
   .pie nav{display:flex;gap:24px}
   .pie a{text-decoration:none}
   .pie nav a:hover{text-decoration:underline;text-underline-offset:3px}
-
   .wa{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;
     background:var(--navy);color:var(--crema);border:1px solid rgba(234,216,177,.4);padding:13px 18px;font:400 var(--t-caption)/1 var(--sans);
     text-transform:uppercase;letter-spacing:.1em;text-decoration:none}
   .wa:hover{background:var(--sol);color:var(--navy);border-color:var(--sol)}
   .barra{display:none}
-
   @media (max-width:960px){
     .grilla{grid-template-columns:1fr 1fr}
     .grilla > div:nth-child(3){padding-left:0;border-left:0}
@@ -237,12 +212,11 @@
 
 <main>
   <div class="h-noche">
-  <!-- HERO -->
   <div class="wrap hero">
     <div>
       <p class="label">Preventa en Lima</p>
       <h1>Despierta con luz, no con un susto</h1>
-      <p class="sub">Aluneya ilumina tu cuarto como un amanecer 30 minutos antes de tu alarma, para que abras los ojos de forma gradual. Y si la luz no basta, suena tu alarma a la hora exacta.</p>
+      <p class="sub">Aluneya ilumina tu cuarto como un amanecer antes de que suene tu alarma, para que abras los ojos de forma gradual. Tú eliges cuánto dura, de 5 a 120 minutos. Y si la luz no basta, suena tu alarma a la hora exacta.</p>
       <div class="acciones">
         <a class="btn" href="#pedido">Reservar sin costo</a>
         <a class="btn solo" href="#como-funciona">Ver cómo funciona</a>
@@ -250,7 +224,8 @@
       <ul class="sellos">
         <li><span>Reserva</span><span>Sin costo</span></li>
         <li><span>Pago</span><span>Recién cuando llega</span></li>
-        <li><span>Garantía</span><span>De fábrica</span></li>
+        <li><span>Envío</span><span>Gratis en Lima</span></li>
+        <li><span>Garantía</span><span>Directa con Aluneya</span></li>
       </ul>
     </div>
 
@@ -271,10 +246,8 @@
       <figcaption><span>Amanecer simulado · foto real del producto</span><span class="pista">Desliza para encenderlo</span></figcaption>
     </figure>
   </div>
-
   </div>
 
-  <!-- BENEFICIOS -->
   <section class="h-madrugada">
     <div class="wrap">
       <p class="hora"><span>Madrugada</span><span>05:40</span></p>
@@ -290,7 +263,6 @@
     </div>
   </section>
 
-  <!-- PARA QUIÉN ES -->
   <section class="h-alba">
     <div class="wrap">
       <p class="hora"><span>Alba</span><span>05:50</span></p>
@@ -319,13 +291,12 @@
     </div>
   </section>
 
-  <!-- CÓMO FUNCIONA -->
   <section class="h-aurora" id="como-funciona">
     <div class="wrap">
       <p class="hora"><span>Empieza el amanecer</span><span>06:00</span></p>
       <div class="cabeza">
-        <div><p class="label stone">Cómo funciona</p><h2>Un amanecer de 30 minutos, cada mañana</h2></div>
-        <p class="intro">Programas la hora a la que quieres levantarte y el despertador se encarga del resto.</p>
+        <div><p class="label stone">Cómo funciona</p><h2>Un amanecer a tu medida, cada mañana</h2></div>
+        <p class="intro">Programas la hora a la que quieres levantarte y cuántos minutos antes empieza la luz, de 5 a 120. Así se ve con 30 minutos:</p>
       </div>
       <div class="pasos">
         <div>
@@ -347,7 +318,6 @@
     </div>
   </section>
 
-  <!-- EN TUS MANOS -->
   <section class="h-aurora" id="en-tus-manos" style="padding-top:0">
     <div class="wrap">
       <p class="hora"><span>Ya clarea</span><span>06:10</span></p>
@@ -358,20 +328,24 @@
       <div class="mano">
         <video src="aluneya-en-mano.mp4" poster="aluneya-en-mano.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Video del despertador Aluneya en la mano encendiéndose"></video>
         <ul class="ficha">
-          <li><span>Amanecer</span><span>30 minutos de luz que sube: rojiza, ámbar y plena</span></li>
-          <li><span>Alarma</span><span>Suena a tu hora con el sonido que elijas, como pájaros u olas</span></li>
-          <li><span>Para dormir</span><span>Ruido blanco y sonidos naturales</span></li>
-          <li><span>De noche</span><span>Luz nocturna cálida y lámpara de lectura</span></li>
-          <li><span>Música</span><span>Parlante Bluetooth</span></li>
-          <li><span>Con tu voz</span><span>Funciona con Alexa y Google Assistant<small>Necesitas un parlante Alexa o Google y WiFi de 2.4 GHz</small></span></li>
-          <li><span>En la caja</span><span>Despertador Aluneya, cable de carga USB y manual en español</span></li>
-          <li><span>Garantía</span><span>De fábrica</span></li>
+          <li><span>Amanecer</span><span>La luz sube poco a poco antes de tu alarma. Tú eliges cuánto: de 5 a 120 minutos</span></li>
+          <li><span>Alarmas</span><span>2 alarmas independientes, todos los días, de lunes a viernes o solo fines de semana<small>7 sonidos: bosque, olas, mañana, melodía, caja musical, campanas de viento y pitido. También puedes despertar solo con luz</small></span></li>
+          <li><span>Posponer</span><span>9 minutos, hasta 5 veces</span></li>
+          <li><span>Para dormir</span><span>11 sonidos, como lluvia, fogata, ruido blanco y ventilador<small>Con temporizador de 5 a 120 minutos y una luz de atardecer que se apaga poco a poco</small></span></li>
+          <li><span>Luz</span><span>Lámpara de lectura y luz nocturna cálida, con brillo regulable</span></li>
+          <li><span>Pantalla</span><span>Reloj con 4 niveles de brillo: apagada, noche, día y automático<small>En automático baja al 10% entre las 10 p.m. y las 6 a.m.</small></span></li>
+          <li><span>Música</span><span>Parlante Bluetooth estéreo, 2 parlantes de 3 W</span></li>
+          <li><span>App y voz</span><span>App Dekala, Alexa y Google Assistant<small>Necesitas WiFi de 2.4 GHz. Sin WiFi funciona igual con sus botones</small></span></li>
+          <li><span>Medidas</span><span>20 × 16.9 × 10.7 cm · 515 g</span></li>
+          <li><span>Energía</span><span>Se enchufa con su adaptador de 5 V, entrada USB-C. No usa batería</span></li>
+          <li><span>En la caja</span><span>Despertador Aluneya, adaptador de corriente y manual de uso</span></li>
+          <li><span>Empaque</span><span>Caja de regalo Aluneya</span></li>
+          <li><span>Garantía</span><span>La damos nosotros: si llega con falla de fábrica, te lo cambiamos</span></li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- CONFIANZA -->
   <section class="h-amanecer">
     <div class="wrap">
       <p class="hora"><span>Amanecer</span><span>06:15</span></p>
@@ -379,15 +353,14 @@
         <div><p class="label stone">Garantías</p><h2>Compra con tranquilidad</h2></div>
       </div>
       <div class="grilla">
-        <div><p class="num">01</p><h3>Garantía de fábrica</h3><p>Si llega con una falla de fábrica, te lo cambiamos.</p></div>
+        <div><p class="num">01</p><h3>Garantía Aluneya</h3><p>La garantía la damos nosotros, no un tercero. Si llega con una falla de fábrica, te lo cambiamos.</p></div>
         <div><p class="num">02</p><h3>Pagas cuando llega</h3><p>Reservar no cuesta nada. Pagas con Yape, Plin o transferencia cuando confirmamos la llegada.</p></div>
-        <div><p class="num">03</p><h3>Envío apenas llega</h3><p>Cuando llegue el lote, te lo enviamos en 24 a 48 horas en Lima. A provincia, por agencia.</p></div>
+        <div><p class="num">03</p><h3>Envío gratis en Lima</h3><p>Cuando llegue el lote, te lo llevamos sin costo en 24 a 48 horas. A provincia, por agencia.</p></div>
         <div><p class="num">04</p><h3>Atención directa</h3><p>Te respondemos por WhatsApp antes, durante y después de tu reserva.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- RESERVA -->
   <section id="pedido" class="h-sol">
     <div class="wrap"><p class="hora"><span>Sale el sol</span><span>06:30</span></p></div>
     <div class="wrap pedido">
@@ -395,10 +368,10 @@
         <p class="label stone">Preventa</p>
         <h2>Reserva tu Aluneya en preventa</h2>
         <p class="bajada">Déjanos tu nombre y distrito. Se abre WhatsApp con tu reserva lista para enviar. Hoy no pagas nada: te avisamos la fecha de llegada antes de cobrar.</p>
-        <p class="precio">S/ 250</p>
-        <p>Precio de preventa para todas las reservas · Envío a Lima según distrito</p>
+        <p class="antes">Precio regular <s>S/ 279.90</s></p>
+        <p class="precio">S/ 249.90</p>
+        <p>Precio de preventa para todas las reservas: ahorras S/ 30 · Envío gratis en Lima · Con boleta</p>
       </div>
-
       <div>
         <form id="form-pedido" novalidate>
           <label class="campo"><span>Tu nombre</span>
@@ -411,7 +384,6 @@
           <button class="btn" type="submit">Reservar por WhatsApp</button>
           <p class="nota">Solo usamos tus datos para coordinar tu reserva. <a href="privacidad.html">Política de privacidad</a></p>
         </form>
-
         <div class="gracias" id="gracias" tabindex="-1">
           <p class="label stone">Reserva iniciada</p>
           <h3>Ya casi tienes tu lugar</h3>
@@ -427,24 +399,35 @@
     </div>
   </section>
 
-  <!-- FAQ -->
   <section id="preguntas" class="h-amanecer">
     <div class="wrap">
       <div class="cabeza">
         <div><p class="label stone">Preguntas</p><h2>Preguntas frecuentes</h2></div>
         <div class="faq">
           <details><summary>¿Cómo funciona la preventa?</summary><p>Reservas tu lugar gratis por WhatsApp. Si juntamos suficientes reservas, traemos el primer lote y te avisamos la fecha de llegada. Recién ahí pagas. Si no se importa, no pierdes nada.</p></details>
-          <details><summary>¿Cuándo llega?</summary><p>Te confirmamos la fecha por WhatsApp apenas el lote esté en camino. Todas las reservas de preventa mantienen el precio de S/ 250.</p></details>
+          <details><summary>¿Cuándo llega?</summary><p>Te confirmamos la fecha por WhatsApp apenas el lote esté en camino. Todas las reservas de preventa mantienen el precio de S/ 249.90, aunque después el precio regular sea S/ 279.90.</p></details>
           <details><summary>¿Qué pasa si la luz no me despierta?</summary><p>A la hora programada suena la alarma con el sonido que elijas, así que siempre tienes un respaldo sonoro.</p></details>
-          <details><summary>¿Hacen envíos a provincia?</summary><p>Sí, enviamos por agencia. Escríbenos por WhatsApp para cotizar tu envío.</p></details>
           <details><summary>¿Puedo usarlo solo como lámpara o parlante?</summary><p>Sí. Funciona como luz nocturna, lámpara de lectura y parlante Bluetooth sin programar ninguna alarma.</p></details>
-          <details><summary>¿Cómo funciona la garantía?</summary><p>Si el producto presenta una falla de fábrica, lo cambiamos. Conserva tu comprobante de pago y escríbenos por WhatsApp.</p></details>
+          <details><summary>¿Necesita WiFi para funcionar?</summary><p>No. Todo se maneja con sus botones y perillas. El WiFi de 2.4 GHz solo hace falta si quieres controlarlo desde la app Dekala o con Alexa y Google Assistant.</p></details>
+          <details><summary>¿Puedo elegir cuánto dura el amanecer?</summary><p>Sí. La luz puede empezar entre 5 y 120 minutos antes de tu alarma. También puedes desactivarla y usar solo el sonido.</p></details>
+          <details><summary>¿Puedo despertar solo con luz, sin sonido?</summary><p>Sí. Al programar la alarma eliges la opción sin sonido y solo cambia la luz.</p></details>
+          <details><summary>¿Cuántas alarmas tiene?</summary><p>Dos, independientes. Por ejemplo, una para los días de semana y otra para el fin de semana. Cada una se repite todos los días, de lunes a viernes o solo sábado y domingo.</p></details>
+          <details><summary>¿Tiene posponer?</summary><p>Sí, de 9 minutos y hasta 5 veces. Si no la apagas, la alarma se detiene sola a los 30 minutos y queda lista para el día siguiente.</p></details>
+          <details><summary>¿La pantalla molesta para dormir?</summary><p>No tiene por qué. Tiene 4 niveles: apagada, noche, día y automático. En automático baja al 10% entre las 10 p.m. y las 6 a.m.</p></details>
+          <details><summary>¿Tiene batería?</summary><p>No, va enchufado. Viene con su adaptador de corriente y se conecta por USB-C.</p></details>
+          <details><summary>¿Cuánto mide?</summary><p>20 × 16.9 × 10.7 cm y pesa 515 g. Entra en cualquier velador.</p></details>
+          <details><summary>¿Puedo escuchar música mientras suena la alarma?</summary><p>Cuando suena la alarma o el modo para dormir, el despertador les da prioridad y pausa el Bluetooth por un momento. El resto del tiempo funciona como parlante.</p></details>
+          <details><summary>¿Cuánto cuesta el envío?</summary><p>En Lima es gratis. A provincia enviamos por agencia: escríbenos por WhatsApp y te cotizamos.</p></details>
+          <details><summary>¿Puedo recogerlo en persona?</summary><p>Por ahora solo hacemos envíos. En Lima no te cuesta nada y lo recibes en 24 a 48 horas desde que llega el lote.</p></details>
+          <details><summary>¿Emiten comprobante?</summary><p>Sí, emitimos boleta por cada compra. La emite ALUNEYA S.A.C., RUC 20616870701.</p></details>
+          <details><summary>¿Sirve para regalo?</summary><p>Sí. Llega en una caja de regalo Aluneya, lista para entregar.</p></details>
+          <details><summary>¿Puedo devolverlo si cambio de opinión?</summary><p>Por ser preventa no aceptamos devoluciones por cambio de opinión. Por eso te contamos todo lo que hace en esta página y respondemos cualquier duda por WhatsApp antes de que pagues. Si llega con una falla de fábrica, te lo cambiamos.</p></details>
+          <details><summary>¿Cómo funciona la garantía?</summary><p>La garantía la da Aluneya directamente. Si el producto presenta una falla de fábrica, te lo cambiamos. Conserva tu comprobante de pago y escríbenos por WhatsApp.</p></details>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CIERRE -->
   <section class="cierre h-dia">
     <div class="wrap">
       <p class="hora"><span>Buenos días</span><span>07:00</span></p>
@@ -471,7 +454,6 @@
 <div class="barra"><a href="#pedido">Reservar</a><a href="https://wa.me/51918158168?text=Hola%20Aluneya%2C%20tengo%20una%20consulta" target="_blank" rel="noopener">WhatsApp</a></div>
 
 <script>
-  // ---------- AMANECER CON LA LÁMPARA REAL ----------
   (function(){
     const marco=document.getElementById('visual'), r=document.getElementById('hora');
     if(!marco||!r) return;
@@ -501,7 +483,6 @@
     pintar(0); requestAnimationFrame(paso);
   })();
 
-  // Formulario -> WhatsApp -> agradecimiento
   (function(){
     const TELEFONO = '51918158168';
     const form = document.getElementById('form-pedido');
@@ -518,7 +499,7 @@
         return;
       }
       error.textContent = '';
-      const mensaje = 'Hola Aluneya, soy ' + nombre + ' de ' + distrito + '. Quiero reservar el despertador de luz en preventa (S/ 250).';
+      const mensaje = 'Hola Aluneya, soy ' + nombre + ' de ' + distrito + '. Quiero reservar el despertador de luz en preventa (S/ 249.90).';
       const url = 'https://wa.me/' + TELEFONO + '?text=' + encodeURIComponent(mensaje);
       reintento.href = url;
       window.open(url, '_blank', 'noopener');
